@@ -55,7 +55,9 @@ unless($c eq "")
 }
 
 # Prints the footer:
-print	$q->p("By Alex Kerr"),
+print	$q->a(
+			 { -href=>"https://github.com/kirbyman62/play-quote-search/blob/master/pity.pl" },
+	 		 "By Alex Kerr"),
 		$q->p("#teamgiovanni"),
 		$q->end_html;
 
