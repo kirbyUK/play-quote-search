@@ -2,12 +2,16 @@
 use strict;
 use CGI;
 use CGI::Carp 'fatalsToBrowser';
+use utf8;
 
 # A script to get all the quotes of a passed character 
 # from the HTML version of John Ford's 'Tis Pity She's a Whore,
 # and display them in an easy-to-use webpage.
 # Files can be downloaded from here:
 # ebooks.adelaide.edu.au/cgi-bin/zip/f/ford/john/pity
+
+# Just hard code the directory name:
+my $DIR_PATH = "/srv/http/cgi-bin/TisPity/";
 
 # A list of characters in the play:
 my @characters = (
@@ -35,7 +39,7 @@ unshift(@characters, "");
 my $q = CGI->new;
 
 # Prints the header:
-print	$q->header,
+print	$q->header(-charset=>"UTF-8"),
 		$q->start_html("Tis Pity Quotes"),
 		$q->h1("'Tis Pity She's a Whore Quotes");
 
@@ -56,7 +60,8 @@ unless($c eq "")
 
 # Prints the footer:
 print	$q->a(
-			 { -href=>"https://github.com/kirbyman62/play-quote-search/blob/master/pity.pl" },
+			 { -href =>
+			   "https://github.com/kirbyman62/play-quote-search/blob/master/pity.pl" },
 	 		 "By Alex Kerr"),
 		$q->p("#teamgiovanni"),
 		$q->end_html;
@@ -65,10 +70,7 @@ sub get_quotes
 {
 	my $c = shift;
 
-	# Just hard code the directory name:
-	my $DIR_PATH = "/home/alex/TisPity/";
-
-	# Open the directory:
+	#Open the directory:
 	opendir DIR, $DIR_PATH or die "Could not open '$DIR_PATH': $!\n";
 
 	#Each act is split into files:
@@ -79,13 +81,13 @@ sub get_quotes
 
 		#Get the full filepath to open the file:
 		my $filepath = $DIR_PATH . $filename;
-		open FILE, $filepath or die "Cannot open '$filepath': $!\n";
+		open my $file, $filepath or die "Cannot open '$filepath': $!\n";
 
 		print $q->p("<font size = 4>ACT $1</font>");
 
 		#Slurp the file (poor memory):
 		local $/;
-		my $contents = <FILE>;
+		my $contents = <$file>;
 
 		#Read the file for any quotes with the given character:
 		while($contents =~ m{<p><span class="speaker">$c</span>\. (.*?)</p>}gis)
@@ -93,14 +95,14 @@ sub get_quotes
 			#Remove any wayward HTML:
 			(my $quote = $1) =~ s/<.*?>//gs;
 
+			#Remove any non-breaking spaces:
+			$quote =~ s/&#160;/ /g;
+
 			#Remove any numbers, leftover from notes:
 			$quote =~ s/\d//g;
 
 			#Make stage directions italic:
 			$quote =~ s{(\[.*\.\]?)}{<em>$1</em>}g;
-
-			#Make apostrophes normal (grr):
-			$quote =~ s/€™/'/g;
 
 			print $q->p("$quote");
 		}
