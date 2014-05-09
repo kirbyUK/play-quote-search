@@ -1,7 +1,7 @@
 play-quote-search
 =================
 
-pity.k1h.eu
+http://pity.k1h.eu
 
 Basically my first time messing about with CGI programming, this gets a play
 from some kind of file (whatever I could find), and dumps everything said by
