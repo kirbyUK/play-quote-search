@@ -32,6 +32,14 @@ my @characters = (
 	"cardinal"
 );
 
+#Non-serious messages for the footer:
+my @footers = (
+	"#teamgiovanni",
+	"(\N{U+261E}\N{U+00B0}\N{U+2200}\N{U+00B0})\N{U+261E}",
+	"gl;hf",
+);
+
+
 @characters = sort @characters;
 unshift(@characters, "");
 
@@ -63,7 +71,7 @@ print	$q->a(
 			 { -href =>
 			   "https://github.com/kirbyman62/play-quote-search/blob/master/pity.pl" },
 	 		 "By Alex Kerr"),
-		$q->p("#teamgiovanni"),
+		$q->p($footers[rand @footers]),
 		$q->end_html;
 
 sub get_quotes
